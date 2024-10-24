@@ -27,7 +27,18 @@ function make_f(
             push!(gnt[ixc.l], weight_funtion(ixc, lnα[ixc.l]))
         end
         gn = [hcat(ignt...) for ignt = gnt]
-        energy(al..., gn..., Ht, Vt, ne)
+        return energy(al..., gn..., Ht, Vt, ne)
     end
-    return f_opt, xar0, (car0, orbs, lnα, al, Ht, Vt, ne)
+
+    function get_x(
+        xar::Array{Float64, 1},
+        car0::Array{Float64, 1},
+        orbs::Array{Tuple, 1},
+    )
+        xcar = copy(car0)
+        xcar[isnan.(xcar)] .= xar
+        return make_wfstructs(xcar, orbs)
+    end
+
+    return f_opt, xar0, (car0, orbs, lnα, al, Ht, Vt, ne), get_x
 end
