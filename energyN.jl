@@ -9,11 +9,11 @@ function Sabpp(a::Float64, b::Float64)
     return (π/(a+b))^(3/2)/2/(a+b)
 end
 
-function Habss(a::Float64, b::Float64, ζ::Int64)
+function Habss(a::Float64, b::Float64, ζ::Int16)
     return 3*a*b/(a+b)*Sabss(a,b) - 2*π*ζ/(a+b)
 end
 
-function Habpp(a::Float64, b::Float64, ζ::Int64)
+function Habpp(a::Float64, b::Float64, ζ::Int16)
     return 5*a*b/(a+b)*Sabpp(a,b) - 2*π*ζ/3/(a+b)^2
 end
 
@@ -125,7 +125,7 @@ end
 
 @fastmath function HValpha(
     als::Array{Float64, 1},
-    ζ::Int64
+    ζ::Int16
 )
     ns = size(als,1)
     Hsst = Array{Float64}(undef, ns, ns)
@@ -143,7 +143,7 @@ end
 @fastmath function HValpha(
     als::Array{Float64, 1},
     alp::Array{Float64, 1},
-    ζ::Int64
+    ζ::Int16
 )
     ns = size(als,1)
     np = size(alp,1)
@@ -191,10 +191,8 @@ end
 end
 
 @fastmath function integral2g(
-    als::Array{Float64, 1},
     gs::Array{Float64, 2},
     Ht::Tuple,
-    ζ::Int64
 )
     Hss = dot.(eachrow(gs'*Ht[1]),eachcol(gs))
 
@@ -203,12 +201,9 @@ end
 end
 
 @fastmath function integral2g(
-    als::Array{Float64, 1},
-    alp::Array{Float64, 1},
     gs::Array{Float64, 2},
     gp::Array{Float64, 2},
     Ht::Tuple,
-    ζ::Int64
 )
     Hss = dot.(eachrow(gs'*Ht[1]),eachcol(gs))
     Hpp = dot.(eachrow(gp'*Ht[2]),eachcol(gp))
@@ -218,12 +213,9 @@ end
 end
 
 function integral4g(
-    als::Array{Float64, 1},
     gs::Array{Float64, 2},
     Vt::Tuple,
-    ne::Int64
 )
-    ns = size(als,1)
     ngs = size(gs,2)
 
     Vsssst = Vt[1]
@@ -246,14 +238,11 @@ function integral4g(
 end
 
 function integral4g(
-    als::Array{Float64, 1},
-    alp::Array{Float64, 1},
     gs::Array{Float64, 2},
     gp::Array{Float64, 2},
     Vt::Tuple,
-    ne::Int64
+    # ne::Int16
 )
-    ns = size(als,1)
     ngs = size(gs,2)
 
     Vsssst = Vt[1]
@@ -271,7 +260,6 @@ function integral4g(
         end
     end
 
-    np = size(alp,1)
     ngp = size(gp,2)
 
     Vssppt = Vt[2]
@@ -307,7 +295,7 @@ function integral4g(
         end
     end
 
-    if ne > 5
+    # if ne > 5
         Vppppt = Vt[5]
         @tensor Jab[i,j,c,d] := gp[a,i]*Vppppt[a,b,c,d]*gp[b,j]
         @tensor J[i,j,k,l] := gp[c,k]*Jab[i,j,c,d]*gp[d,l]
@@ -325,21 +313,21 @@ function integral4g(
         @inbounds for i = 1:ngp, j = 1:ngp
             @views Kpxpypxpy[i,j] = J[i,j,i,j]
         end
-    else
-        Jpxpxpypy = 0
-        Kpxpypxpy = 0
-    end
+    # else
+    #     Jpxpxpypy = 0
+    #     Kpxpypxpy = 0
+    # end
 
     return (Jssss, Jsspp, Jpppp, Jpxpxpypy), (Kssss, Kspsp, Kpppp, Kpxpypxpy)
 end
 
-function get_αβ(neo::Int64, ntype::Int64)
-    αβ = [(neo-1) % ntype + 1, 0]
-    αβ[2] = neo - αβ[1]
-    return sort(αβ, rev=true)
-end
+# function get_αβ(neo::Int16, ntype::Int16)
+#     αβ = [(neo-1) % ntype + 1, 0]
+#     αβ[2] = neo - αβ[1]
+#     return sort(αβ, rev=true)
+# end
 
-function ne2distribution(ne::Int64)
+function ne2distribution(ne::Int16)
     n = 1
     l = ['s','p','p','p']
     li = 1
@@ -378,7 +366,7 @@ end
 
 function density_prep(
     als::Array{Float64, 1},
-    ζ::Int64,
+    ζ::Int16,
 )
     Ht, Vt = HValpha(als,ζ)
     return Ht, Vt
@@ -387,7 +375,7 @@ end
 function density_prep(
     als::Array{Float64, 1},
     alp::Array{Float64, 1},
-    ζ::Int64,
+    ζ::Int16,
 )
     Ht, Vt = HValpha(als,alp,ζ)
     return Ht, Vt
@@ -398,13 +386,12 @@ function energy(
     gs::Array{Float64, 2},
     Ht::Tuple,
     Vt::Tuple,
-    ζ::Int64,
-    ne::Int64
+    ne::Int16
 )
     gs = normalized(als, gs)
     gs = orthonormalized(als, gs)
-    H = integral2g(als, gs, Ht, ζ)
-    J, K = integral4g(als, gs, Vt, ne)
+    H = integral2g(gs, Ht)
+    J, K = integral4g(gs, Vt)
 
     dist = ne2distribution(ne)
     ndist = size(dist)[1]
@@ -457,14 +444,14 @@ end
 function energy(
     als::Array{Float64, 1},
     gs::Array{Float64, 2},
-    ζ::Int64,
-    ne::Int64
+    ζ::Int16,
+    ne::Int16
 )
     gs = normalized(als, gs)
     gs = orthonormalized(als, gs)
     Ht, Jt = density_prep(als, ζ)
-    H = integral2g(als, gs, Ht, ζ)
-    J, K = integral4g(als, gs, Vt, ne)
+    H = integral2g(gs, Ht)
+    J, K = integral4g(gs, Vt)
 
     dist = ne2distribution(ne)
     ndist = size(dist)[1]
@@ -521,13 +508,12 @@ function energy(
     gp::Array{Float64, 2},
     Ht::Tuple,
     Vt::Tuple,
-    ζ::Int64,
-    ne::Int64
+    ne::Int16
 )
     gs, gp = normalized(als, alp, gs, gp)
     gs, gp = orthonormalized(als, alp, gs, gp)
-    H = integral2g(als, alp, gs, gp, Ht, ζ)
-    J, K = integral4g(als, alp, gs, gp, Vt, ne)
+    H = integral2g(gs, gp, Ht)
+    J, K = integral4g(gs, gp, Vt)
 
     dist = ne2distribution(ne)
     ndist = size(dist)[1]
@@ -582,14 +568,14 @@ function energy(
     alp::Array{Float64, 1},
     gs::Array{Float64, 2},
     gp::Array{Float64, 2},
-    ζ::Int64,
-    ne::Int64
+    ζ::Int16,
+    ne::Int16
 )
     gs, gp = normalized(als, alp, gs, gp)
     gs, gp = orthonormalized(als, alp, gs, gp)
     Ht, Vt = density_prep(als, alp, ζ)
-    H = integral2g(als, alp, gs, gp, Ht, ζ)
-    J, K = integral4g(als, alp, gs, gp, Vt, ne)
+    H = integral2g(gs, gp, Ht)
+    J, K = integral4g(gs, gp, Vt)
 
     dist = ne2distribution(ne)
     ndist = size(dist)[1]
