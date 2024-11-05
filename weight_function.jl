@@ -14,6 +14,24 @@ struct nGum_opt
     d::Array{Bool, 1}
 end
 
+struct nSig
+    n::Int8
+    l::Int8
+    a::Float64
+    v::Float64
+    r::Array{Float64, 1}
+    c::Array{Float64, 1}
+    d::Array{Float64, 1}
+end
+
+struct nSig_opt
+    a::Bool
+    v::Bool
+    r::Array{Bool, 1}
+    c::Array{Bool, 1}
+    d::Array{Bool, 1}
+end
+
 struct nGuma
     n::Int8
     l::Int8
@@ -48,6 +66,26 @@ struct nGumqe_opt
     d::Array{Bool, 1}
 end
 
+# struct nGLF
+#     n::Int8
+#     l::Int8
+#     r::Array{Float64, 1}
+#     a::Array{Float64, 1}
+#     b::Array{Float64, 1}
+#     z::Array{Float64, 1}
+#     u::Array{Float64, 1}
+#     v::Array{Float64, 1}
+# end
+
+# struct nGLF_opt
+#     r::Array{Bool, 1}
+#     a::Array{Bool, 1}
+#     b::Array{Bool, 1}
+#     z::Array{Bool, 1}
+#     u::Array{Bool, 1}
+#     v::Array{Bool, 1}
+# end
+
 function qexp(x::Real, q)
     if q == 1
         return exp.(x)
@@ -80,8 +118,18 @@ function weight_funtion(x::nGum, lnα)
     return gum
 end
 
+function weight_funtion(x::nSig, lnα)
+    d = x.d .- log(1/abs(x.v))/abs(x.a)
+    gum = 1 ./ (1 .+ exp.(-abs(x.a)*(lnα .- d'))).^(1/abs(x.v)) * abs.(x.c)
+    gum .*= exp.(-1/2*lnα)
+    for i = 1:x.n-x.l
+        gum .*= (exp.(-(lnα .- x.r[i])) .- 1)
+    end
+    return gum
+end
+
 function weight_funtion(x::nGuma, lnα)
-    gum = exp.(-exp.(-x.a'.*(lnα .- x.d'))) * x.c
+    gum = exp.(-exp.(-abs.(x.a)'.*(lnα .- x.d'))) * abs.(x.c)
     gum .*= exp.(-1/2*lnα)
     for i = 1:x.n-x.l
         gum .*= (exp.(-(lnα .- x.r[i])) .- 1)
@@ -99,7 +147,54 @@ function weight_funtion(x::nGumqe, lnα)
     return gum
 end
 
+# function weight_funtion(x::nGLF, lnα)
+#     a, z, u, v = abs.((x.a, x.z, x.u, x.v))
+#     b = x.b
+#     gum = 
+#     gum = gum * abs.(x.c)
+#     gum .*= exp.(-1/2*lnα)
+#     for i = 1:x.n-x.l
+#         gum .*= (exp.(-(lnα .- x.r[i])) .- 1)
+#     end
+#     return gum
+# end
+
 function make_array(x::Array{nGum}, op::Array{nGum_opt})
+    xar = Array{Float64}(undef, 0)
+    car = Array{Float64}(undef, 0)
+    orbs = Array{Tuple}(undef, 0)
+    for i = 1:size(x,1)
+        nci = size(car,1)
+        n = x[i].n
+        l = x[i].l
+        for name = fieldnames(typeof(x[i]))
+            name in [:n, :l] ? continue :
+            prop = getproperty(x[i], name)
+            opprop = getproperty(op[i], name)
+            if opprop isa Bool
+                if opprop
+                    append!(xar, prop)
+                    append!(car, fill(NaN, size(prop,1)))
+                else
+                    append!(car, prop)
+                end
+            else
+                for j = eachindex(opprop)
+                    if opprop[j]
+                        append!(xar, prop[j])
+                        append!(car, NaN)
+                    else
+                        append!(car, prop[j])
+                    end
+                end
+            end
+        end
+        push!(orbs, (size(car,1)-nci, n, l))
+    end
+    return xar, car, orbs
+end
+
+function make_array(x::Array{nSig}, op::Array{nSig_opt})
     xar = Array{Float64}(undef, 0)
     car = Array{Float64}(undef, 0)
     orbs = Array{Tuple}(undef, 0)
@@ -215,6 +310,23 @@ function make_wfstr_nGum(xcar::Array{Float64, 1}, orbs::Array{Tuple, 1})
         c = [popfirst!(xcar) for _ = 1:ncd/2]
         d = [popfirst!(xcar) for _ = 1:ncd/2]
         push!(xc, nGum(a, n, l, r, c, d))
+    end
+    return xc
+end
+
+function make_wfstr_nSig(xcar::Array{Float64, 1}, orbs::Array{Tuple, 1})
+    xc = Array{nSig}(undef, 0)
+    for orb = orbs
+        n, l = orb[2:3]
+        a = popfirst!(xcar)
+        v = popfirst!(xcar)
+        nr = n - l
+        r = [popfirst!(xcar) for _ = 1:nr]
+        ncd = orb[1] - (nr + 2)
+        # ncd = size(xcar,1)
+        c = [popfirst!(xcar) for _ = 1:ncd/2]
+        d = [popfirst!(xcar) for _ = 1:ncd/2]
+        push!(xc, nSig(n, l, a, v, r, c, d))
     end
     return xc
 end
