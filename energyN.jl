@@ -80,18 +80,20 @@ function normalized(
     return gsn, gpn
 end
 
+# Grand-Schmidt
 function orthonormalized(
     als::Array{Float64, 1},
     gs::Array{Float64, 2},
 )
     gsn = similar(gs)
     Ssst = [Sabss(i[1],i[2]) for i = Iterators.product(als, als)]
-    ng = size(gs,2)
-    Sss = Array{Float64}(undef, ng, ng)
-    for i = 1:ng, j = 1:ng
-        Sss[i,j] = gs[:,i]'*Ssst*gs[:,j]
+    for i = 1:size(gs,2)
+        gsn[:,i] = gs[:,i]
+        for j = 1:i-1
+            gsn[:,i] = gsn[:,i] - (gns[:,i]'*Ssst*gns[:,j]) * gns[:,j]
+        end
+        gsn[:,i] = gsn[:,i] / sqrt(gsn[:,i]'*Ssst*gsn[:,i])
     end
-    gsn .= gs*Sss^(-1/2)
 
     return gsn
 end
@@ -103,25 +105,71 @@ function orthonormalized(
     gp::Array{Float64, 2},
 )
     gsn = similar(gs)
-    gpn = similar(gp)
     Ssst = [Sabss(i[1],i[2]) for i = Iterators.product(als, als)]
-    ng = size(gs,2)
-    Sss = Array{Float64}(undef, ng, ng)
-    for i = 1:ng, j = 1:ng
-        Sss[i,j] = gs[:,i]'*Ssst*gs[:,j]
+    for i = 1:size(gs,2)
+        gsn[:,i] = gs[:,i]
+        for j = 1:i-1
+            gsn[:,i] = gsn[:,i] - (gsn[:,i]'*Ssst*gsn[:,j]) * gsn[:,j]
+        end
+        gsn[:,i] = gsn[:,i] / sqrt(gsn[:,i]'*Ssst*gsn[:,i])
     end
-    gsn .= gs*Sss^(-1/2)
 
+    gpn = similar(gp)
     Sppt = [Sabpp(i[1],i[2]) for i = Iterators.product(alp, alp)]
-    ng = size(gp,2)
-    Spp = Array{Float64}(undef, ng, ng)
-    for i = 1:ng, j = 1:ng
-        Spp[i,j] = gp[:,i]'*Sppt*gp[:,j]
+    for i = 1:size(gp,2)
+        gpn[:,i] = gp[:,i]
+        for j = 1:i-1
+            gpn[:,i] = gpn[:,i] - (gpn[:,i]'*Sppt*gpn[:,j]) * gpn[:,j]
+        end
+        gpn[:,i] = gpn[:,i] / sqrt(gpn[:,i]'*Sppt*gpn[:,i])
     end
-    gpn .= gp*Spp^(-1/2)
 
     return gsn, gpn
 end
+
+# # Lowdin
+# function orthonormalized(
+#     als::Array{Float64, 1},
+#     gs::Array{Float64, 2},
+# )
+#     gsn = similar(gs)
+#     Ssst = [Sabss(i[1],i[2]) for i = Iterators.product(als, als)]
+#     ng = size(gs,2)
+#     Sss = Array{Float64}(undef, ng, ng)
+#     for i = 1:ng, j = 1:ng
+#         Sss[i,j] = gs[:,i]'*Ssst*gs[:,j]
+#     end
+#     gsn .= gs*Sss^(-1/2)
+
+#     return gsn
+# end
+
+# function orthonormalized(
+#     als::Array{Float64, 1},
+#     alp::Array{Float64, 1},
+#     gs::Array{Float64, 2},
+#     gp::Array{Float64, 2},
+# )
+#     gsn = similar(gs)
+#     gpn = similar(gp)
+#     Ssst = [Sabss(i[1],i[2]) for i = Iterators.product(als, als)]
+#     ng = size(gs,2)
+#     Sss = Array{Float64}(undef, ng, ng)
+#     for i = 1:ng, j = 1:ng
+#         Sss[i,j] = gs[:,i]'*Ssst*gs[:,j]
+#     end
+#     gsn .= gs*Sss^(-1/2)
+
+#     Sppt = [Sabpp(i[1],i[2]) for i = Iterators.product(alp, alp)]
+#     ng = size(gp,2)
+#     Spp = Array{Float64}(undef, ng, ng)
+#     for i = 1:ng, j = 1:ng
+#         Spp[i,j] = gp[:,i]'*Sppt*gp[:,j]
+#     end
+#     gpn .= gp*Spp^(-1/2)
+
+#     return gsn, gpn
+# end
 
 @fastmath function HValpha(
     als::Array{Float64, 1},

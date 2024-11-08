@@ -119,8 +119,8 @@ function weight_funtion(x::nGum, lnα)
 end
 
 function weight_funtion(x::nSig, lnα)
-    d = x.d .- log(1/abs(x.v))/abs(x.a)
-    gum = 1 ./ (1 .+ exp.(-abs(x.a)*(lnα .- d'))).^(1/abs(x.v)) * abs.(x.c)
+    d = x.d .- x.v/abs(x.a)
+    gum = 1 ./ (1 .+ exp.(-abs(x.a)*(lnα .- d'))).^(exp(x.v)) * abs.(x.c)
     gum .*= exp.(-1/2*lnα)
     for i = 1:x.n-x.l
         gum .*= (exp.(-(lnα .- x.r[i])) .- 1)
@@ -324,8 +324,12 @@ function make_wfstr_nSig(xcar::Array{Float64, 1}, orbs::Array{Tuple, 1})
         r = [popfirst!(xcar) for _ = 1:nr]
         ncd = orb[1] - (nr + 2)
         # ncd = size(xcar,1)
-        c = [popfirst!(xcar) for _ = 1:ncd/2]
+        c = abs.([popfirst!(xcar) for _ = 1:ncd/2])
+        c = c/sum(c)
         d = [popfirst!(xcar) for _ = 1:ncd/2]
+        id = sortperm(d)
+        c = c[id]
+        d = d[id]
         push!(xc, nSig(n, l, a, v, r, c, d))
     end
     return xc
