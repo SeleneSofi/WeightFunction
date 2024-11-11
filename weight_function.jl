@@ -119,8 +119,9 @@ function weight_funtion(x::nGum, lnα)
 end
 
 function weight_funtion(x::nSig, lnα)
-    d = x.d .- x.v/abs(x.a)
-    gum = 1 ./ (1 .+ exp.(-abs(x.a)*(lnα .- d'))).^(exp(x.v)) * abs.(x.c)
+    a = abs(x.a)*exp(-1)*(1+exp(-x.v))^(1+exp(x.v))
+    d = x.d .- x.v/a
+    gum = 1 ./ (1 .+ exp.(-a*(lnα .- d'))).^(exp(x.v)) * abs.(x.c)
     gum .*= exp.(-1/2*lnα)
     for i = 1:x.n-x.l
         gum .*= (exp.(-(lnα .- x.r[i])) .- 1)
@@ -159,7 +160,7 @@ end
 #     return gum
 # end
 
-function make_array(x::Array{nGum}, op::Array{nGum_opt})
+function make_array(x::Array, op::Array)
     xar = Array{Float64}(undef, 0)
     car = Array{Float64}(undef, 0)
     orbs = Array{Tuple}(undef, 0)
@@ -194,110 +195,145 @@ function make_array(x::Array{nGum}, op::Array{nGum_opt})
     return xar, car, orbs
 end
 
-function make_array(x::Array{nSig}, op::Array{nSig_opt})
-    xar = Array{Float64}(undef, 0)
-    car = Array{Float64}(undef, 0)
-    orbs = Array{Tuple}(undef, 0)
-    for i = 1:size(x,1)
-        nci = size(car,1)
-        n = x[i].n
-        l = x[i].l
-        for name = fieldnames(typeof(x[i]))
-            name in [:n, :l] ? continue :
-            prop = getproperty(x[i], name)
-            opprop = getproperty(op[i], name)
-            if opprop isa Bool
-                if opprop
-                    append!(xar, prop)
-                    append!(car, fill(NaN, size(prop,1)))
-                else
-                    append!(car, prop)
-                end
-            else
-                for j = eachindex(opprop)
-                    if opprop[j]
-                        append!(xar, prop[j])
-                        append!(car, NaN)
-                    else
-                        append!(car, prop[j])
-                    end
-                end
-            end
-        end
-        push!(orbs, (size(car,1)-nci, n, l))
-    end
-    return xar, car, orbs
-end
+# function make_array(x::Array{nGum}, op::Array{nGum_opt})
+#     xar = Array{Float64}(undef, 0)
+#     car = Array{Float64}(undef, 0)
+#     orbs = Array{Tuple}(undef, 0)
+#     for i = 1:size(x,1)
+#         nci = size(car,1)
+#         n = x[i].n
+#         l = x[i].l
+#         for name = fieldnames(typeof(x[i]))
+#             name in [:n, :l] ? continue :
+#             prop = getproperty(x[i], name)
+#             opprop = getproperty(op[i], name)
+#             if opprop isa Bool
+#                 if opprop
+#                     append!(xar, prop)
+#                     append!(car, fill(NaN, size(prop,1)))
+#                 else
+#                     append!(car, prop)
+#                 end
+#             else
+#                 for j = eachindex(opprop)
+#                     if opprop[j]
+#                         append!(xar, prop[j])
+#                         append!(car, NaN)
+#                     else
+#                         append!(car, prop[j])
+#                     end
+#                 end
+#             end
+#         end
+#         push!(orbs, (size(car,1)-nci, n, l))
+#     end
+#     return xar, car, orbs
+# end
 
-function make_array(x::Array{nGuma}, op::Array{nGuma_opt})
-    xar = Array{Float64}(undef, 0)
-    car = Array{Float64}(undef, 0)
-    orbs = Array{Tuple}(undef, 0)
-    for i = 1:size(x,1)
-        nci = size(car,1)
-        n = x[i].n
-        l = x[i].l
-        for name = fieldnames(typeof(x[i]))
-            name in [:n, :l] ? continue :
-            prop = getproperty(x[i], name)
-            opprop = getproperty(op[i], name)
-            if opprop isa Bool
-                if opprop
-                    append!(xar, prop)
-                    append!(car, fill(NaN, size(prop,1)))
-                else
-                    append!(car, prop)
-                end
-            else
-                for j = eachindex(opprop)
-                    if opprop[j]
-                        append!(xar, prop[j])
-                        append!(car, NaN)
-                    else
-                        append!(car, prop[j])
-                    end
-                end
-            end
-        end
-        push!(orbs, (size(car,1)-nci, n, l))
-    end
-    return xar, car, orbs
-end
+# function make_array(x::Array{nSig}, op::Array{nSig_opt})
+#     xar = Array{Float64}(undef, 0)
+#     car = Array{Float64}(undef, 0)
+#     orbs = Array{Tuple}(undef, 0)
+#     for i = 1:size(x,1)
+#         nci = size(car,1)
+#         n = x[i].n
+#         l = x[i].l
+#         for name = fieldnames(typeof(x[i]))
+#             name in [:n, :l] ? continue :
+#             prop = getproperty(x[i], name)
+#             opprop = getproperty(op[i], name)
+#             if opprop isa Bool
+#                 if opprop
+#                     append!(xar, prop)
+#                     append!(car, fill(NaN, size(prop,1)))
+#                 else
+#                     append!(car, prop)
+#                 end
+#             else
+#                 for j = eachindex(opprop)
+#                     if opprop[j]
+#                         append!(xar, prop[j])
+#                         append!(car, NaN)
+#                     else
+#                         append!(car, prop[j])
+#                     end
+#                 end
+#             end
+#         end
+#         push!(orbs, (size(car,1)-nci, n, l))
+#     end
+#     return xar, car, orbs
+# end
 
-function make_array(x::Array{nGumqe}, op::Array{nGumqe_opt})
-    xar = Array{Float64}(undef, 0)
-    car = Array{Float64}(undef, 0)
-    orbs = Array{Tuple}(undef, 0)
-    for i = 1:size(x,1)
-        nci = size(car,1)
-        n = x[i].n
-        l = x[i].l
-        for name = fieldnames(typeof(x[i]))
-            name in [:n, :l] ? continue :
-            prop = getproperty(x[i], name)
-            opprop = getproperty(op[i], name)
-            if opprop isa Bool
-                if opprop
-                    append!(xar, prop)
-                    append!(car, fill(NaN, size(prop,1)))
-                else
-                    append!(car, prop)
-                end
-            else
-                for j = eachindex(opprop)
-                    if opprop[j]
-                        append!(xar, prop[j])
-                        append!(car, NaN)
-                    else
-                        append!(car, prop[j])
-                    end
-                end
-            end
-        end
-        push!(orbs, (size(car,1)-nci, n, l))
-    end
-    return xar, car, orbs
-end
+# function make_array(x::Array{nGuma}, op::Array{nGuma_opt})
+#     xar = Array{Float64}(undef, 0)
+#     car = Array{Float64}(undef, 0)
+#     orbs = Array{Tuple}(undef, 0)
+#     for i = 1:size(x,1)
+#         nci = size(car,1)
+#         n = x[i].n
+#         l = x[i].l
+#         for name = fieldnames(typeof(x[i]))
+#             name in [:n, :l] ? continue :
+#             prop = getproperty(x[i], name)
+#             opprop = getproperty(op[i], name)
+#             if opprop isa Bool
+#                 if opprop
+#                     append!(xar, prop)
+#                     append!(car, fill(NaN, size(prop,1)))
+#                 else
+#                     append!(car, prop)
+#                 end
+#             else
+#                 for j = eachindex(opprop)
+#                     if opprop[j]
+#                         append!(xar, prop[j])
+#                         append!(car, NaN)
+#                     else
+#                         append!(car, prop[j])
+#                     end
+#                 end
+#             end
+#         end
+#         push!(orbs, (size(car,1)-nci, n, l))
+#     end
+#     return xar, car, orbs
+# end
+
+# function make_array(x::Array{nGumqe}, op::Array{nGumqe_opt})
+#     xar = Array{Float64}(undef, 0)
+#     car = Array{Float64}(undef, 0)
+#     orbs = Array{Tuple}(undef, 0)
+#     for i = 1:size(x,1)
+#         nci = size(car,1)
+#         n = x[i].n
+#         l = x[i].l
+#         for name = fieldnames(typeof(x[i]))
+#             name in [:n, :l] ? continue :
+#             prop = getproperty(x[i], name)
+#             opprop = getproperty(op[i], name)
+#             if opprop isa Bool
+#                 if opprop
+#                     append!(xar, prop)
+#                     append!(car, fill(NaN, size(prop,1)))
+#                 else
+#                     append!(car, prop)
+#                 end
+#             else
+#                 for j = eachindex(opprop)
+#                     if opprop[j]
+#                         append!(xar, prop[j])
+#                         append!(car, NaN)
+#                     else
+#                         append!(car, prop[j])
+#                     end
+#                 end
+#             end
+#         end
+#         push!(orbs, (size(car,1)-nci, n, l))
+#     end
+#     return xar, car, orbs
+# end
 
 function make_wfstr_nGum(xcar::Array{Float64, 1}, orbs::Array{Tuple, 1})
     xc = Array{nGum}(undef, 0)
