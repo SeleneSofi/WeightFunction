@@ -90,7 +90,7 @@ function orthonormalized(
     for i = 1:size(gs,2)
         gsn[:,i] = gs[:,i]
         for j = 1:i-1
-            gsn[:,i] = gsn[:,i] - (gns[:,i]'*Ssst*gns[:,j]) * gns[:,j]
+            gsn[:,i] = gsn[:,i] - (gsn[:,i]'*Ssst*gsn[:,j]) * gsn[:,j]
         end
         gsn[:,i] = gsn[:,i] / sqrt(gsn[:,i]'*Ssst*gsn[:,i])
     end
