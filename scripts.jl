@@ -1,3 +1,7 @@
+include("quadrature.jl")
+include("weight_function.jl")
+include("energyN.jl")
+
 function run_script(script, qt, x0, ζ, ne, Elim)
     nsum = 4
     if script == "1s2s3s,2p3p"

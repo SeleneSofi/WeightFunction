@@ -1,3 +1,7 @@
+include("quadrature.jl")
+include("weight_function.jl")
+include("energyN.jl")
+
 function graph_wf(
     qti::Array{ETabn},
     x0::Array{nSig}

@@ -1,3 +1,7 @@
+include("quadrature.jl")
+include("weight_function.jl")
+include("energyN.jl")
+
 function make_f(
     qt::Array{ETabn},
     x0::Array{nGum},
