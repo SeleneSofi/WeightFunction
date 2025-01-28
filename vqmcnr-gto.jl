@@ -17,7 +17,7 @@ gr()
 default(legend = false)
 include("quadrature.jl")
 include("weight_function.jl")
-include("dict_neutrals.jl")
+include("dict_base.jl")
 include("energyN.jl")
 
 # Setting general auxiliar functions
@@ -360,8 +360,20 @@ function qmcinp(iask::Bool, icor::Bool, atom::Int, ion::Int, spin::Char, base::S
         x0 = database[_zn][_ne]["x"]
         al, gn = make_wf(qt, x0)
         _nα, _nβ, _np, _ep, _ζ, _cαp, _cβp = ne2nαβ(_ne, al, gn, num)
+    elseif base == "wf-et-35s35p"
+        num = [35, 35]
+        _zn = atom
+        _ne = copy(_zn)
+        if ion ≠ 0
+            _ne -= ion
+        end
+        qt = database[_zn][_ne]["qt"]
+        qt = [typeof(iqt)(iqt.a,iqt.b,35) for iqt = qt]
+        x0 = database[_zn][_ne]["x"]
+        al, gn = make_wf(qt, x0)
+        _nα, _nβ, _np, _ep, _ζ, _cαp, _cβp = ne2nαβ(_ne, al, gn, num)
     end
-    if ion ≠ 0 && base ≠ "wf-et-50s50p" # 1s¹2s²2p⁴
+    if ion ≠ 0 && base ≠ "wf-et-50s50p" && base ≠ "wf-et-35s35p" # 1s¹2s²2p⁴
         _ne -= 1
         if spin == 'α'
             _nα -= 1
