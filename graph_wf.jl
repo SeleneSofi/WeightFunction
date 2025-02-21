@@ -3,10 +3,10 @@ include("weight_function.jl")
 include("energyN.jl")
 
 function graph_wf(
-    qti::Array{ETabn},
+    qti::Array{QtUnion},
     x0::Array{nSig}
 )
-    qt = [ETabn(iqti.a, iqti.b, 1000) for iqti in qti]
+    qt = [QtUnion(iqti.a, iqti.b, 1000) for iqti in qti]
     lnα = [calc_lnα(iqt) for iqt = qt]
     al = [exp.(ilnα) for ilnα = lnα]
     gnt = [Array{Array}(undef, 0) for _ = lnα]

@@ -1,6 +1,6 @@
 Elim = -599.0175794;
-ζ::Int16 = 19
-ne::Int16 = 18
+ζ::Int64 = 19
+ne::Int64 = 18
 deltz = +2*log(19/18)
 qt = [
     ETabn(-5+deltz,20,50),
@@ -26,8 +26,8 @@ x0 = [
 ]
 
 Elim = -526.2745343;
-ζ::Int16 = 18
-ne::Int16 = 17
+ζ::Int64 = 18
+ne::Int64 = 17
 qt = [
     ETabn(-5,20,50),
     ETabn(-5,20,50)
@@ -51,8 +51,8 @@ x0 = [
 ]
 
 Elim = -459.0485907;
-ζ::Int16 = 17
-ne::Int16 = 16
+ζ::Int64 = 17
+ne::Int64 = 16
 deltz = +2*log(17/18)
 qt = [
     ETabn(-5+deltz,20,50),
@@ -77,8 +77,8 @@ x0 = [
 ]
 
 Elim = -397.1731828;
-ζ::Int16 = 16
-ne::Int16 = 15
+ζ::Int64 = 16
+ne::Int64 = 15
 deltz = +2*log(16/18)
 qt = [
     ETabn(-5+deltz,20,50),
@@ -103,8 +103,8 @@ x0 = [
 ]
 
 Elim = -340.3497759;
-ζ::Int16 = 15
-ne::Int16 = 14
+ζ::Int64 = 15
+ne::Int64 = 14
 deltz = +2*log(15/18)
 qt = [
     ETabn(-5+deltz,20,50),
@@ -129,8 +129,8 @@ x0 = [
 ]
 
 Elim = -288.5731311;
-ζ::Int16 = 14
-ne::Int16 = 13
+ζ::Int64 = 14
+ne::Int64 = 13
 deltz = +2*log(14/18)
 qt = [
     ETabn(-5+deltz,20,50),
@@ -155,8 +155,8 @@ x0 = [
 ]
 
 Elim = -241.6746705;
-ζ::Int16 = 13
-ne::Int16 = 12
+ζ::Int64 = 13
+ne::Int64 = 12
 deltz = +2*log(13/12)
 qt = [
     ETabn(-5.2+deltz,20,50),
@@ -179,8 +179,8 @@ x0 = [
 ]
 
 Elim = -199.3718097;
-ζ::Int16 = 12
-ne::Int16 = 11
+ζ::Int64 = 12
+ne::Int64 = 11
 qt = [
     ETabn(-5.2,20,50),
     ETabn(-5.2,20,50)
@@ -202,8 +202,8 @@ x0 = [
 ]
 
 Elim = -161.6769626;
-ζ::Int16 = 11
-ne::Int16 = 10
+ζ::Int64 = 11
+ne::Int64 = 10
 deltz = +2*log(11/10)
 qt = [
     ETabn(-4.2+deltz,20,50),
@@ -224,8 +224,8 @@ x0 = [
 ]
 
 Elim = -127.8178141;
-ζ::Int16 = 10
-ne::Int16 = 9
+ζ::Int64 = 10
+ne::Int64 = 9
 qt = [
     ETabn(-4.2,20,50),
     ETabn(-4.2,20,50)
@@ -245,8 +245,8 @@ x0 = [
 ]
 
 Elim = -98.83172020;
-ζ::Int16 = 9
-ne::Int16 = 8
+ζ::Int64 = 9
+ne::Int64 = 8
 deltz = +2*log(9/10)
 qt = [
     ETabn(-4.2+deltz,20,50),
@@ -267,8 +267,8 @@ x0 = [
 ]
 
 Elim = -74.37260568;
-ζ::Int16 = 8
-ne::Int16 = 7
+ζ::Int64 = 8
+ne::Int64 = 7
 deltz = +2*log(8/10)
 qt = [
     ETabn(-4.2+deltz,20,50),
@@ -289,8 +289,8 @@ x0 = [
 ]
 
 Elim = -53.88800501;
-ζ::Int16 = 7
-ne::Int16 = 6
+ζ::Int64 = 7
+ne::Int64 = 6
 deltz = +2*log(7/10)
 qt = [
     ETabn(-4.2+deltz,20,50),
@@ -311,8 +311,8 @@ x0 = [
 ]
 
 Elim = -37.29222377;
-ζ::Int16 = 6
-ne::Int16 = 5
+ζ::Int64 = 6
+ne::Int64 = 5
 deltz = +2*log(6/10)
 qt = [
     ETabn(-4.2+deltz,20,50),
@@ -333,8 +333,8 @@ x0 = [
 ]
 
 Elim = -24.23757518;
-ζ::Int16 = 5
-ne::Int16 = 4
+ζ::Int64 = 5
+ne::Int64 = 4
 deltz = +2*log(5/4)
 qt = [
     ETabn(-5.4+deltz,20,50)
@@ -353,8 +353,8 @@ x0 = [
 ]
 
 Elim = -14.27739481;
-ζ::Int16 = 4
-ne::Int16 = 3
+ζ::Int64 = 4
+ne::Int64 = 3
 qt = [
     ETabn(-5.4,20,50),
 ]
@@ -371,8 +371,8 @@ x0 = [
 ]
 
 Elim = -7.236415201;
-ζ::Int16 = 3
-ne::Int16 = 2
+ζ::Int64 = 3
+ne::Int64 = 2
 deltz = +2*log(3/2)
 qt = [
     ETabn(-6+deltz,20,50),
@@ -388,8 +388,8 @@ x0 = [
 ]
 
 Elim = -2;
-ζ::Int16 = 2
-ne::Int16 = 1
+ζ::Int64 = 2
+ne::Int64 = 1
 qt = [
     ETabn(-6+deltz,20,50),
 ]

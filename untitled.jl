@@ -1,5 +1,5 @@
-z::Int16 = 5
-ne::Int16 = 5
+z::Int64 = 5
+ne::Int64 = 5
 qt = database[z][ne]["qt"]
 x = database[z][ne]["x"]
 Elim = database[z][ne]["Elim"]

@@ -9,11 +9,11 @@ function Sabpp(a::Float64, b::Float64)
     return (π/(a+b))^(3/2)/2/(a+b)
 end
 
-function Habss(a::Float64, b::Float64, ζ::Int16)
+function Habss(a::Float64, b::Float64, ζ::Int64)
     return 3*a*b/(a+b)*Sabss(a,b) - 2*π*ζ/(a+b)
 end
 
-function Habpp(a::Float64, b::Float64, ζ::Int16)
+function Habpp(a::Float64, b::Float64, ζ::Int64)
     return 5*a*b/(a+b)*Sabpp(a,b) - 2*π*ζ/3/(a+b)^2
 end
 
@@ -173,7 +173,7 @@ end
 
 @fastmath function HValpha(
     als::Array{Float64, 1},
-    ζ::Int16
+    ζ::Int64
 )
     ns = size(als,1)
     Hsst = Array{Float64}(undef, ns, ns)
@@ -191,7 +191,7 @@ end
 @fastmath function HValpha(
     als::Array{Float64, 1},
     alp::Array{Float64, 1},
-    ζ::Int16
+    ζ::Int64
 )
     ns = size(als,1)
     np = size(alp,1)
@@ -289,7 +289,7 @@ function integral4g(
     gs::Array{Float64, 2},
     gp::Array{Float64, 2},
     Vt::Tuple,
-    # ne::Int16
+    # ne::Int64
 )
     ngs = size(gs,2)
 
@@ -369,13 +369,13 @@ function integral4g(
     return (Jssss, Jsspp, Jpppp, Jpxpxpypy), (Kssss, Kspsp, Kpppp, Kpxpypxpy)
 end
 
-# function get_αβ(neo::Int16, ntype::Int16)
+# function get_αβ(neo::Int64, ntype::Int64)
 #     αβ = [(neo-1) % ntype + 1, 0]
 #     αβ[2] = neo - αβ[1]
 #     return sort(αβ, rev=true)
 # end
 
-function ne2distribution(ne::Int16)
+function ne2distribution(ne::Int64)
     n = 1
     l = ['s','p','p','p']
     li = 1
@@ -414,7 +414,7 @@ end
 
 function density_prep(
     als::Array{Float64, 1},
-    ζ::Int16,
+    ζ::Int64,
 )
     Ht, Vt = HValpha(als,ζ)
     return Ht, Vt
@@ -423,7 +423,7 @@ end
 function density_prep(
     als::Array{Float64, 1},
     alp::Array{Float64, 1},
-    ζ::Int16,
+    ζ::Int64,
 )
     Ht, Vt = HValpha(als,alp,ζ)
     return Ht, Vt
@@ -434,7 +434,7 @@ function energy(
     gs::Array{Float64, 2},
     Ht::Tuple,
     Vt::Tuple,
-    ne::Int16
+    ne::Int64
 )
     gs = normalized(als, gs)
     gs = orthonormalized(als, gs)
@@ -492,8 +492,8 @@ end
 function energy(
     als::Array{Float64, 1},
     gs::Array{Float64, 2},
-    ζ::Int16,
-    ne::Int16
+    ζ::Int64,
+    ne::Int64
 )
     gs = normalized(als, gs)
     gs = orthonormalized(als, gs)
@@ -556,7 +556,7 @@ function energy(
     gp::Array{Float64, 2},
     Ht::Tuple,
     Vt::Tuple,
-    ne::Int16
+    ne::Int64
 )
     gs, gp = normalized(als, alp, gs, gp)
     gs, gp = orthonormalized(als, alp, gs, gp)
@@ -616,8 +616,8 @@ function energy(
     alp::Array{Float64, 1},
     gs::Array{Float64, 2},
     gp::Array{Float64, 2},
-    ζ::Int16,
-    ne::Int16
+    ζ::Int64,
+    ne::Int64
 )
     gs, gp = normalized(als, alp, gs, gp)
     gs, gp = orthonormalized(als, alp, gs, gp)

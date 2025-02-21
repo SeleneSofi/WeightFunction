@@ -12,8 +12,8 @@ op0 = [
 for ikey = keys(database)
     for jkey = keys(database[ikey])
         if jkey isa Number
-            ζ::Int16 = ikey
-            ne::Int16 = jkey
+            ζ::Int64 = ikey
+            ne::Int64 = jkey
             print(string(ζ)*" "*string(ne)*"|")
             if ne == 1
                 op = [nSig_opt(0, 0, Float64[], [0], [0])]
